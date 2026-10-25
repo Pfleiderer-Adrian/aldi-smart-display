@@ -37,8 +37,6 @@ not flashing the firmware again.
 
 ## Supported hardware
 
-This is deliberately a narrow, tested device profile:
-
 | Item | Tested device |
 |---|---|
 | Product Name| BAUHN Smart Display fürs Auto |
