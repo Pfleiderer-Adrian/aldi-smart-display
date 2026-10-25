@@ -1,4 +1,4 @@
-# Windows: from a factory display to the SD demo
+# Windows Installation
 
 Run commands in PowerShell from the repository folder. Windows x64 and Python
 3.12+ are the intended host setup. No WSL, Android Studio or Linux VM is needed.
@@ -36,12 +36,9 @@ If Windows offers to format the FEL card afterwards, cancel.
 
 ## 3. Enter FEL and install its Windows driver
 
-Power off the display, insert the FEL card, hold the power button and connect
-the tested USB **data** port to the PC. On the development unit this was the
-Micro-USB connection; USB-C had been used for power. Do not assume every visible
-USB socket provides the same data connection.
+Power off the display (remove cabel), insert the FEL card, hold the power button (hole FEL setup) and connect the tested USB cabel to your display (USB-C) and to the PC (USB-A). 
 
-Use [Zadig](https://zadig.akeo.ie/) if the FEL device lacks a driver:
+Start [Zadig](https://zadig.akeo.ie/):
 
 1. Choose the device with USB ID **`1F3A:EFE8`**.
 2. Choose **WinUSB**, then install its driver.
@@ -65,7 +62,7 @@ Expected: `SoC V853 ID 0x1886`. A black screen in FEL is normal.
 
 `backup` performs two independent 16-MiB reads and compares them. Save
 `work/original.bin`, `work/original-verify.bin` and the checksum file somewhere
-outside the computer too. Do not upload them to GitHub.
+outside the computer too. Do not upload them to the internet!
 
 `prepare` accepts only the tested factory firmware, updates its own boot package,
 and rebuilds its rootfs while verifying the allowed script changes.
@@ -75,7 +72,7 @@ Review `work/prepared/manifest.json` before the next step.
 
 ## 5. Flash and verify
 
-Keep FEL connected and the power supply stable:
+Keep FEL connected and the power button pressed:
 
 ```powershell
 .\.venv\Scripts\python.exe tools/firmware.py install --write
@@ -83,7 +80,7 @@ Keep FEL connected and the power supply stable:
 
 The installer makes another full backup, checks the source partitions, writes
 rootfs and boot package, reads back each, then verifies all 16 MiB. Wait for
-**`FULL_FLASH_VERIFIED`** before disconnecting. This takes several minutes.
+**`FULL_FLASH_VERIFIED`** before disconnecting or lift the power button. This takes several minutes.
 
 ## 6. Use the data card and check ADB
 
@@ -98,17 +95,15 @@ Copy the contents of `sd-card/` (included demo) or `build/sd-card/` (your rebuil
 to the data card's root. Power off, remove the FEL card, insert the data card and boot normally.
 Do not keep the power button held as for FEL.
 
-After about 25 seconds the demo should appear automatically:
+After about 25 seconds the demo should appear automatically.
+Now you should have full access to the display throw ADB:
 
 ```powershell
 .\platform-tools\adb.exe devices -l
 .\platform-tools\adb.exe shell 'cat /tmp/usb-adb-boot-fix.log; cat /tmp/user-app.log'
 ```
 
-ADB is a separate USB device, **`18D1:D002` / Tina ADB**. Windows may need WinUSB
-for this device too. The FEL driver's presence alone does not prove that the ADB
-driver is present. A short USB disconnect during startup is expected; the boot
-correction restores device mode automatically.
+ADB is a separate USB device, **`18D1:D002` / Tina ADB**. 
 
 Tap **Back to menu** to end the demo until the next boot. Without the data card,
 the original interface runs. See [recovery](recovery.md) before making further

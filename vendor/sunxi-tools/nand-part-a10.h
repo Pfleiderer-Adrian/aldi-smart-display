@@ -59,8 +59,8 @@ typedef struct tag_PARTITION{
 	__u32 lenlo;				//size low 32 bit
 	__u8  classname[12];		//major device name
 	__u8  name[12];				//minor device name
-	unsigned  int       user_type;          //标志当前盘符所属于的用户
-	unsigned  int       ro;                 //标志当前盘符的读写属性
+	unsigned  int       user_type; // User associated with this partition
+	unsigned  int       ro; // Partition read/write attributes
 	__u8  res[16];				//reserved
 }PARTITION;
 

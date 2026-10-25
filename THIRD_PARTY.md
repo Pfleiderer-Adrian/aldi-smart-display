@@ -7,7 +7,9 @@
 <https://github.com/linux-sunxi/sunxi-tools>.
 
 `fel-spiflash.c` includes our tested V853 SPI-register, GPIO-bank and pin-mux
-changes. `tools/fel-v853.c` includes the remote-function helpers from upstream
+changes. Chinese explanatory comments in the two NAND partition headers and
+`nand-part-main.c` have been translated into English without changing code.
+`tools/fel-v853.c` includes the remote-function helpers from upstream
 `fel.c`, plus our restricted host CLI. Upstream copyright notices and
 `vendor/sunxi-tools/LICENSE.md` are retained. License: GPL-2.0-or-later as stated
 in the individual files. The root LICENSE contains GPL version 2.

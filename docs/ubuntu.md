@@ -1,4 +1,4 @@
-# Ubuntu: from a factory display to the SD demo
+# Ubuntu Installation
 
 Run commands from the repository folder. Ubuntu 24.04 x64 is the CI target;
 the earlier hardware investigation was performed on Ubuntu 22.04. The cleaned
@@ -45,8 +45,10 @@ Keep this recovery card separate from the normal FAT32 data card.
 
 ## 3. Enter FEL and enable USB access
 
-Power off, insert the FEL card, hold the power button and connect the USB data
-port (Micro-USB on the development unit). Verify:
+Power off the display by disconnecting its cable. Insert the FEL card, hold
+the power button throughout the FEL session, and connect the tested USB cable
+to the display's **USB-C** port and the computer's **USB-A** port. Keep the
+button pressed during backup and flashing. Verify:
 
 ```bash
 lsusb -d 1f3a:efe8
@@ -82,10 +84,13 @@ No Zadig driver is needed on Ubuntu.
 
 The first command reads all 16 MiB twice and compares the results. Keep the
 original files/checksum in `work/` private and save another copy elsewhere.
+Do not upload these files to the internet.
 The builder refuses unknown factory boot/rootfs versions. The last command only
 prints the plan; review `work/prepared/manifest.json`.
 
 ## 5. Flash and verify
+
+Keep FEL connected, the power supply stable, and the power button pressed:
 
 ```bash
 .venv/bin/python tools/firmware.py install --write
@@ -93,7 +98,8 @@ prints the plan; review `work/prepared/manifest.json`.
 
 Do not interrupt power. The command checks a fresh backup, writes only the boot
 package and rootfs, verifies both and then compares the entire flash. Wait for
-**`FULL_FLASH_VERIFIED`**. Expect several minutes.
+**`FULL_FLASH_VERIFIED`** before disconnecting or releasing the power button.
+This takes several minutes.
 
 ## 6. Boot from the data card
 
@@ -104,13 +110,17 @@ Formatting erases the selected card. Keep the FEL recovery card separate.
 Copy the contents of `sd-card/` (included demo) or `build/sd-card/` (your rebuild)
 to the root of that **second FAT32 card**.
 Power off, remove the FEL card, insert the data card and boot normally.
+Do not keep the power button held as for FEL.
 
-After about 25 seconds:
+After about 25 seconds the demo should appear automatically.
+You should now have full access to the display through ADB:
 
 ```bash
 adb devices -l
 adb shell 'cat /tmp/usb-adb-boot-fix.log; cat /tmp/user-app.log'
 ```
+
+ADB is a separate USB device, **`18d1:d002` / Tina ADB**.
 
 The demo starts automatically from `/mnt/extsd/autostart.sh`. Without a card or
 without that script, the manufacturer interface keeps running. **Back to menu**

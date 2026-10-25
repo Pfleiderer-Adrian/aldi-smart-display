@@ -1,23 +1,20 @@
 # aldi-smart-display
 
-[Deutsche Kurzanleitung](README.de.md)
+[Quick start](docs/quickstart.md)
 
-Community tools for **ADB access, SD-card autostart and native applications** on
-the Aldi smart display. Unofficial project; not affiliated with Aldi or the
+Community tool for **ADB access, SD-card autostart and native applications** on
+the Aldi smart display from 2026. Unofficial project; not affiliated with Aldi or the
 device manufacturer.
 
-The demo says **Hello World** and **access developed by Pfleiderer-Adrian**.
-Tap the background to change its color; **Back to menu** returns to the original
+The demo showes a hello world test application. Tap the background to change its color; **Back to menu** returns to the original
 interface.
 
 ## What you get
 
-- A separate FEL recovery-card image.
-- A V853-capable FEL tool, with source, for Windows and Ubuntu.
 - A builder that enables ADB using **your own factory firmware backup**.
 - Automatic USB recovery after the manufacturer's USB-host initialization.
 - A firmware hook that starts `/autostart.sh` from the FAT32 data microSD.
-- A small native framebuffer demo that runs directly from the data card.
+- A small native hello world demo that runs directly from the data card.
 
 **Without a data card, or without `autostart.sh`, the manufacturer interface
 continues running.** Application updates normally require changing SD files,
@@ -29,16 +26,16 @@ This is deliberately a narrow, tested device profile:
 
 | Item | Tested device |
 |---|---|
+| Product Name| BAUHN Smart Display fürs Auto |
 | SoC | Allwinner V853, FEL ID `0x1886` |
 | Internal flash | 16 MiB SPI NOR |
-| Screen | 1024 × 600, 16-bit ARGB1555, two framebuffer pages |
+| Screen | 1024 × 600, 16-bit ARGB1555 |
 | Touch | Goodix, `/dev/input/event1` |
 | FEL USB ID | `1f3a:efe8` |
 | ADB USB ID | `18d1:d002` (Tina ADB) |
 
 The firmware builder accepts only the known factory boot/rootfs hashes.
-If your firmware differs, it stops. Keep your own backup and report the hardware
-details instead of flashing an image from someone else's display.
+If your firmware differs, it stops. Keep your own backup save.
 
 ## Start here
 
