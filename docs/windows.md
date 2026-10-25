@@ -3,6 +3,13 @@
 Run commands in PowerShell from the repository folder. Windows x64 and Python
 3.12+ are the intended host setup. No WSL, Android Studio or Linux VM is needed.
 
+> WARNING:
+> **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
+> Follow this guide at your own risk. Compatibility is limited to the tested hardware and firmware;
+> a failed flash, incompatible image, or interrupted power supply may prevent the device from booting.
+> Keep a verified backup of your own original firmware and the FEL recovery card before making changes.
+> Recovery is not guaranteed. This project is provided without warranty.
+
 ## 1. Prepare the computer
 
 Install [Python](https://www.python.org/downloads/windows/) and download/extract

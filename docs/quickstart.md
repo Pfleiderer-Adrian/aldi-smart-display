@@ -1,5 +1,12 @@
 # Aldi Smart Display: quick start
 
+> WARNING:
+> **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
+> Follow this guide at your own risk. Compatibility is limited to the tested hardware and firmware;
+> a failed flash, incompatible image, or interrupted power supply may prevent the device from booting.
+> Keep a verified backup of your own original firmware and the FEL recovery card before making changes.
+> Recovery is not guaranteed. This project is provided without warranty.
+
 This unofficial community project enables **ADB access**, **automatic startup
 of applications from microSD**, and a small **Hello World demo**. It is not an
 official Aldi project.

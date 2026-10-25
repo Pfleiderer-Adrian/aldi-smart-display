@@ -1,4 +1,4 @@
-# aldi-smart-display
+# Aldi Smart Display
 
 [Quick start](docs/quickstart.md)
 
@@ -8,6 +8,18 @@ device manufacturer.
 
 The demo showes a hello world test application. Tap the background to change its color; **Back to menu** returns to the original
 interface.
+
+
+![BAUHN smart display running the Hello World demo](assets/readme_image.jpeg)
+
+*The Hello World demo running on the BAUHN smart display.*
+
+> WARNING:
+> **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
+> Follow this guide at your own risk. Compatibility is limited to the tested hardware and firmware;
+> a failed flash, incompatible image, or interrupted power supply may prevent the device from booting.
+> Keep a verified backup of your own original firmware and the FEL recovery card before making changes.
+> Recovery is not guaranteed. This project is provided without warranty.
 
 ## What you get
 

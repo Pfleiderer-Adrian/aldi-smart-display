@@ -4,6 +4,13 @@ Run commands from the repository folder. Ubuntu 24.04 x64 is the CI target;
 the earlier hardware investigation was performed on Ubuntu 22.04. The cleaned
 package's Ubuntu build results must be checked in CI.
 
+> WARNING:
+> **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
+> Follow this guide at your own risk. Compatibility is limited to the tested hardware and firmware;
+> a failed flash, incompatible image, or interrupted power supply may prevent the device from booting.
+> Keep a verified backup of your own original firmware and the FEL recovery card before making changes.
+> Recovery is not guaranteed. This project is provided without warranty.
+
 ## 1. Install host tools
 
 ```bash
