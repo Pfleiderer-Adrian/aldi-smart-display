@@ -1,0 +1,81 @@
+#!/bin/sh
+
+# Keep the original early ADB startup. Restore USB device mode once, after
+# the manufacturer stack has initialized its USB host support.
+usb_adb_boot_fix() {
+    [ -e /data/disable-usb-adb-fix ] && return 0
+    mkdir /tmp/usb-adb-boot-fix.lock 2>/dev/null || return 0
+    n=0
+    ready=0
+    while [ "$n" -lt 90 ]; do
+        [ -e /data/disable-usb-adb-fix ] && return 0
+        if [ -e /tmp/lyusbcp ]; then
+            ready=1
+            break
+        fi
+        n=$((n + 1))
+        sleep 1
+    done
+    [ "$ready" = 1 ] || {
+        echo "USB_FIX: initialization marker missing; no role change"
+        return 0
+    }
+    sleep 5
+    [ -e /data/disable-usb-adb-fix ] && return 0
+    role=$(cat /sys/devices/platform/soc/usbc0/otg_role)
+    echo "USB_FIX: initialized, role=$role"
+    if [ "$role" = usb_host ]; then
+        # Freeze only the UI during the role transition, then resume it.
+        resume_pid=""
+        for comm in /proc/[0-9]*/comm; do
+            read -r name < "$comm" 2>/dev/null || continue
+            [ "$name" = cdr ] || continue
+            pid=${comm#/proc/}
+            pid=${pid%/comm}
+            state=$(grep '^State:' /proc/$pid/status)
+            case "$state" in
+                *stopped*) ;;
+                *)
+                    kill -STOP "$pid" || return 1
+                    resume_pid=$pid
+                    ;;
+            esac
+            break
+        done
+        trap '[ -z "$resume_pid" ] || kill -CONT "$resume_pid"' 0
+        cat /sys/devices/platform/soc/usbc0/usb_device
+        sleep 2
+        /usr/bin/setusbconfig adb
+        sleep 3
+        if [ -n "$resume_pid" ]; then
+            kill -CONT "$resume_pid"
+            resume_pid=""
+        fi
+    elif [ "$role" != usb_device ]; then
+        echo "USB_FIX: unexpected role; no change"
+        return 0
+    fi
+    [ -e /sys/kernel/config/usb_gadget/g1/configs/c.1/ffs.adb ] ||
+        /usr/bin/setusbconfig adb
+    echo "USB_FIX: finished"
+    cat /sys/devices/platform/soc/usbc0/otg_role
+    cat /sys/class/udc/*/state
+}
+
+case "$1" in
+    start)
+        (
+            mkdir -p /tmp
+            sleep 3
+            /usr/bin/setusbconfig adb
+            /bin/adbd -D
+        ) >> /tmp/adbd-start.log 2>&1 &
+        usb_adb_boot_fix >> /tmp/usb-adb-boot-fix.log 2>&1 &
+        ;;
+    check)
+        usb_adb_boot_fix
+        ;;
+    *)
+        exit 0
+        ;;
+esac

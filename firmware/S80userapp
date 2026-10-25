@@ -1,0 +1,32 @@
+#!/bin/sh
+case "$1" in
+    start)
+        [ -e /data/disable-user-app ] && exit 0
+        (
+            n=0
+            while [ "$n" -lt 110 ]; do
+                [ -e /data/disable-user-app ] && exit 0
+                # The stock firmware normally mounts the card here. Retry if
+                # card enumeration finished after rc.final's mount attempt.
+                if ! grep -q ' /mnt/extsd ' /proc/mounts; then
+                    if [ -b /dev/mmcblk0p1 ]; then
+                        mount -t vfat /dev/mmcblk0p1 /mnt/extsd 2>/dev/null
+                    elif [ -b /dev/mmcblk0 ]; then
+                        mount -t vfat /dev/mmcblk0 /mnt/extsd 2>/dev/null
+                    fi
+                fi
+                if grep -q 'USB_FIX: finished' /tmp/usb-adb-boot-fix.log 2>/dev/null &&
+                    grep -q ' /mnt/extsd ' /proc/mounts &&
+                    [ -f /mnt/extsd/autostart.sh ]; then
+                    cd /mnt/extsd || exit 1
+                    export SD_ROOT=/mnt/extsd
+                    echo 'SD_AUTOSTART: starting /mnt/extsd/autostart.sh'
+                    exec /bin/sh /mnt/extsd/autostart.sh
+                fi
+                n=$((n + 1))
+                sleep 1
+            done
+            echo 'SD_AUTOSTART: no ready SD application; leaving manufacturer UI active'
+        ) >> /tmp/user-app.log 2>&1 &
+        ;;
+esac

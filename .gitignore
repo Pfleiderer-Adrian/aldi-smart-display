@@ -1,0 +1,14 @@
+/build/
+/work/
+/.venv/
+__pycache__/
+*.pyc
+*.bin
+*.squashfs
+*.tar
+*.zip
+*.exe
+*.dll
+*.7z
+*.log
+!assets/fel-sdboot.sunxi
