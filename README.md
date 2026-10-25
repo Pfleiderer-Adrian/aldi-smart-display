@@ -10,7 +10,10 @@ The demo showes a hello world test application. Tap the background to change its
 interface.
 
 
-![BAUHN smart display running the Hello World demo](assets/readme_image.jpeg)
+<br>
+<p align="center">
+  <img src="assets/readme_image.jpeg" alt="BAUHN smart display running the Hello World demo" width="500">
+</p>
 
 *The Hello World demo running on the BAUHN smart display.*
 
