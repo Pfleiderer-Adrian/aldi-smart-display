@@ -142,8 +142,7 @@ needed.
 creates its temporary Wi-Fi configuration in RAM. Native connections currently
 require local HTTP/WS with an IPv4 address; TLS is not supported, so the token is
 unencrypted on the LAN. See the [panel README](home-panel/README.md) for supported
-cards, limitations and development instructions. A full cold-boot test of the
-panel's SD startup is still pending.
+cards, limitations and development instructions.
 
 ## Development and recovery
 
