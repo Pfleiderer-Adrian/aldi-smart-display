@@ -11,15 +11,17 @@ device manufacturer.
 <p align="center">
   <img src="assets/readme_image.jpeg" alt="BAUHN smart display running the Hello World demo" width="500">
 </p>
-
-*The Hello World demo running on the BAUHN smart display.*
-
-
+<p align="center">
+**The Hello World demo running on the BAUHN smart display.**
+</p>  
+<br>  
 <p align="center">
   <img src="assets/readme_image_ha.jpeg" alt="BAUHN smart display running the Home Assistant Panel" width="500">
 </p>
-
-*Home Assistant Panel running on the BAUHN smart display.*
+<p align="center">
+**Home Assistant Panel running on the BAUHN smart display.**
+</p>
+<br>
 
 > WARNING:
 > **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
@@ -27,6 +29,7 @@ device manufacturer.
 > a failed flash, incompatible image, or interrupted power supply may prevent the device from booting.
 > Keep a verified backup of your own original firmware and the FEL recovery card before making changes.
 > Recovery is not guaranteed. This project is provided without warranty.
+<br>  
 
 ## What you get
 
