@@ -11,15 +11,17 @@ device manufacturer.
 <p align="center">
   <img src="assets/readme_image.jpeg" alt="BAUHN smart display running the Hello World demo" width="500">
 </p>
-
-*The Hello World demo running on the BAUHN smart display.*
-
-
+<p align="center">
+**The Hello World demo running on the BAUHN smart display.**
+</p>  
+<br>  
 <p align="center">
   <img src="assets/readme_image_ha.jpeg" alt="BAUHN smart display running the Home Assistant Panel" width="500">
 </p>
-
-*Home Assistant Panel running on the BAUHN smart display.*
+<p align="center">
+**Home Assistant Panel running on the BAUHN smart display.**
+</p>
+<br>
 
 > WARNING:
 > **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
@@ -27,6 +29,7 @@ device manufacturer.
 > a failed flash, incompatible image, or interrupted power supply may prevent the device from booting.
 > Keep a verified backup of your own original firmware and the FEL recovery card before making changes.
 > Recovery is not guaranteed. This project is provided without warranty.
+<br>  
 
 ## What you get
 
@@ -121,7 +124,7 @@ Requires the SD autostart firmware hook from the guide above.
 1. Copy `sd-card/home-panel/` to your FAT32 data card, alongside `hello-world/`.
 2. In that folder, copy `secrets.example.json` to **`secrets.json`** and fill in:
    - `dashboard_url`: full URL including the dashboard and view.
-   - `home_assistant_token`: long-lived access token from HA profile ? Security.
+   - `home_assistant_token`: long-lived access token from your HA profile -> Security.
    - `wifi_ssid` and `wifi_password`: your WPA2 Wi-Fi credentials.
 3. Back up the card's root `autostart.sh`, then replace it with
    [`home-panel/autostart.sh`](home-panel/autostart.sh), or use:
@@ -139,8 +142,7 @@ needed.
 creates its temporary Wi-Fi configuration in RAM. Native connections currently
 require local HTTP/WS with an IPv4 address; TLS is not supported, so the token is
 unencrypted on the LAN. See the [panel README](home-panel/README.md) for supported
-cards, limitations and development instructions. A full cold-boot test of the
-panel's SD startup is still pending.
+cards, limitations and development instructions.
 
 ## Development and recovery
 
