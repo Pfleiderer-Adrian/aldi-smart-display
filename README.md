@@ -43,8 +43,6 @@ not flashing the firmware again.
 
 ## Supported hardware
 
-This is deliberately a narrow, tested device profile:
-
 | Item | Tested device |
 |---|---|
 | Product Name| BAUHN Smart Display fürs Auto |
@@ -154,18 +152,6 @@ panel's SD startup is still pending.
 The repository contains source code and the GPL FEL stub, **not manufacturer
 firmware images, device backups, Wi-Fi credentials or extracted root filesystems**.
 Host downloads and firmware outputs go to ignored `build/` and `work/` folders.
-
-## Validation
-
-On the development device, FEL backup/flashing, root ADB, USB recovery, SD demo
-execution, automatic SD startup and boot without a card were tested. The physical
-display test caught an important detail: ARGB1555's alpha bit must be set; an
-RGB-only preview can look correct while the actual screen is black.
-
-The cleaned host scripts and complete firmware preparation were exercised on
-Windows. A GitHub Actions matrix builds the tools on Windows and Ubuntu;
-check its results before treating a new platform build as tested. Creating a
-repository does not by itself mean that CI has run.
 
 ## License
 
