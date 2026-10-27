@@ -47,3 +47,22 @@ Segoe UI font. The font's own license is not replaced by the project's GPL.
 The manufacturer firmware, proprietary display/phone-link libraries, extracted
 rootfs contents and per-device backups are intentionally absent from this
 repository. The builder reads the user's own firmware locally.
+
+## Home Assistant Panel
+
+`home-panel/vendor/jsmn.h` is jsmn v1.1.0 from
+<https://github.com/zserge/jsmn/tree/v1.1.0>, under the MIT license. Its complete
+license is retained in `home-panel/vendor/JSMN-LICENSE` and alongside the SD binary.
+The panel bundles the same DejaVu font and font license described above.
+The static panel executable is built from `home-panel/` with the pinned Zig toolchain.
+
+The optional Python dashboard importer and lab setup tool use websocket-client
+1.9.2 (Apache-2.0), installed locally via `home-panel/requirements.txt`; the Python
+package itself is not redistributed. Home Assistant is accessed over its APIs;
+its server and frontend are not bundled. The panel's WebSocket and native UI
+implementation is project code under GPL-2.0-or-later.
+
+The publication package omits upstream sunxi-tools tests and its development CI
+file. On 2026-10-27, the vendored Makefile's test-only `check` target and test
+cleanup command were removed to match that packaging change. Runtime and build
+sources and their license notices are retained.

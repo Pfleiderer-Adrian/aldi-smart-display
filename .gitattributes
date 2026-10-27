@@ -6,3 +6,4 @@ firmware/* text eol=lf
 *.h text eol=lf
 *.sunxi binary
 *.ttf binary
+sd-card/home-panel/home-panel binary

@@ -75,7 +75,6 @@ MANDIR  ?= $(PREFIX)/share/man/man1
 APPSTREAM_METAINFODIR ?= $(PREFIX)/share/metainfo
 
 .PHONY: all clean tools target-tools install install-tools install-target-tools install-appstream-metainfo
-.PHONY: check
 
 tools: $(TOOLS) $(FEXC_LINKS)
 target-tools: $(TARGET_TOOLS)
@@ -118,7 +117,6 @@ install-appstream-metainfo: $(APPSTREAM_METAINFO)
 		$(DESTDIR)$(APPSTREAM_METAINFODIR)
 
 clean:
-	make -C tests/ clean
 	@rm -vf $(TOOLS) $(FEXC_LINKS) $(TARGET_TOOLS) $(MISC_TOOLS)
 	@rm -vf version.h *.o $(CLEANFILES)
 
@@ -233,5 +231,3 @@ version.h:
 		echo "$$x"; \
 	done | sort -V > $@
 
-check: $(FEXC_LINKS)
-	make -C tests/

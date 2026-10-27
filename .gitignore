@@ -12,3 +12,16 @@ __pycache__/
 *.7z
 *.log
 !assets/fel-sdboot.sunxi
+
+# Home Assistant Panel: credentials, generated files and cached private dashboards.
+/home-panel/build/
+/home-panel/.venv/
+/home-panel/secrets.json
+/home-panel/connection.cfg
+/home-panel/wifi.conf
+/home-panel/dashboard-cache.json*
+/sd-card/home-panel/connection.cfg
+/sd-card/home-panel/wifi.conf
+/sd-card/home-panel/secrets.json
+/sd-card/home-panel/dashboard-cache.json*
+/sd-card/home-panel/dashboard.tsv

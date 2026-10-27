@@ -1,0 +1,9 @@
+/build/
+/.venv/
+/__pycache__/
+secrets.json
+
+connection.cfg
+wifi.conf
+dashboard-cache.json
+dashboard-cache.json.tmp

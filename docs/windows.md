@@ -4,7 +4,7 @@ Run commands in PowerShell from the repository folder. Windows x64 and Python
 3.12+ are the intended host setup. No WSL, Android Studio or Linux VM is needed.
 
 > WARNING:
-> **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
+> **Flashing modified firmware can brick your display (make it unusable) and cause data loss.**
 > Follow this guide at your own risk. Compatibility is limited to the tested hardware and firmware;
 > a failed flash, incompatible image, or interrupted power supply may prevent the device from booting.
 > Keep a verified backup of your own original firmware and the FEL recovery card before making changes.
@@ -43,13 +43,22 @@ If Windows offers to format the FEL card afterwards, cancel.
 
 ## 3. Enter FEL and install its Windows driver
 
-Power off the display (remove cabel), insert the FEL card, hold the power button (hole FEL setup) and connect the tested USB cabel to your display (USB-C) and to the PC (USB-A). 
+Power off the display by disconnecting its cable. Insert the FEL card, hold the
+power button, and connect the tested USB cable to the display (**USB-C**) and
+the PC (**USB-A**).
+
+**Keep the power button continuously pressed throughout the FEL session,
+including backup reads and the time between commands. Release it only after
+the final installation reports `FULL_FLASH_VERIFIED`.**
 
 Start [Zadig](https://zadig.akeo.ie/):
 
 1. Choose the device with USB ID **`1F3A:EFE8`**.
 2. Choose **WinUSB**, then install its driver.
 3. Avoid changing drivers for unrelated devices.
+
+If WinUSB is already installed and the version check below succeeds, you do
+not need to reinstall the driver.
 
 Check:
 
@@ -87,7 +96,13 @@ Keep FEL connected and the power button pressed:
 
 The installer makes another full backup, checks the source partitions, writes
 rootfs and boot package, reads back each, then verifies all 16 MiB. Wait for
-**`FULL_FLASH_VERIFIED`** before disconnecting or lift the power button. This takes several minutes.
+**`FULL_FLASH_VERIFIED`** before disconnecting or releasing the power button.
+This takes several minutes.
+
+If a USB transfer fails, stop and check the FEL connection. A failed backup
+read does not modify firmware, but an interrupted write can leave it incomplete.
+Do not boot normally after a failed write until the
+[recovery procedure](recovery.md) has restored and verified the firmware.
 
 ## 6. Use the data card and check ADB
 
@@ -103,7 +118,7 @@ to the data card's root. Power off, remove the FEL card, insert the data card an
 Do not keep the power button held as for FEL.
 
 After about 25 seconds the demo should appear automatically.
-Now you should have full access to the display throw ADB:
+You should now have full access to the display through ADB:
 
 ```powershell
 .\platform-tools\adb.exe devices -l
