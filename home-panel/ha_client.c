@@ -75,7 +75,7 @@ static int wait_fd(int fd,short events,int64_t deadline){
  do{result=poll(&p,1,(int)left);}while(result<0&&errno==EINTR);
  return result>0&&!(p.revents&POLLNVAL);
 }
-static int fetch(const char *entity,char *value,unsigned size,char *name,char *unit,float *volume,int *available){
+static int fetch(const char *entity,char *value,unsigned size,char *name,char *unit,float *volume,int *available,float *brightness,int *brightness_available){
  int fd=socket(AF_INET,SOCK_STREAM,0);if(fd<0)return -1;
  int flags=fcntl(fd,F_GETFL,0);if(flags<0||fcntl(fd,F_SETFL,flags|O_NONBLOCK)<0){close(fd);return -1;}
  struct sockaddr_in addr={0};addr.sin_family=AF_INET;addr.sin_port=htons((unsigned short)port);inet_pton(AF_INET,host,&addr.sin_addr);
@@ -108,16 +108,17 @@ static int fetch(const char *entity,char *value,unsigned size,char *name,char *u
  if(!ha_parse_state(body+4,value,size))return -2;
  dashboard_attributes(body+4,name,81,unit,31);
  *available=dashboard_volume(body+4,volume);
+ *brightness_available=dashboard_brightness(body+4,brightness);
  return 200;
 }
 static int poll_once(void){
  unsigned success=0;int error=0;
  for(unsigned i=0;i<item_count&&!should_stop();i++){
    if(!*items[i].entity){success++;continue;}
-   char value[81],name[81],unit[31];float volume=0;int available=0;int code=fetch(items[i].entity,value,sizeof value,name,unit,&volume,&available);
+   char value[81],name[81],unit[31];float volume=0,brightness=0;int available=0,brightness_available=0;int code=fetch(items[i].entity,value,sizeof value,name,unit,&volume,&available,&brightness,&brightness_available);
    pthread_mutex_lock(&ha_mutex);
-   if(code==200){strcpy(items[i].value,value);if(!items[i].explicit_name&&*name)strcpy(items[i].name,name);strcpy(items[i].unit,unit);items[i].volume=volume;items[i].volume_available=available;success++;}
-   else if(code==404){strcpy(items[i].value,"unavailable");success++;}
+   if(code==200){strcpy(items[i].value,value);if(!items[i].explicit_name&&*name)strcpy(items[i].name,name);strcpy(items[i].unit,unit);items[i].volume=volume;items[i].volume_available=available;items[i].brightness=brightness;items[i].brightness_available=brightness_available;success++;}
+   else if(code==404){strcpy(items[i].value,"unavailable");items[i].volume_available=0;items[i].brightness_available=0;success++;}
    pthread_mutex_unlock(&ha_mutex);
    if(code!=200&&code!=404){error=code;break;}
  }
@@ -227,5 +228,16 @@ void ha_volume(unsigned i,const struct tile *expected,float value){
 void ha_view_position(unsigned *current,unsigned *total){
  pthread_mutex_lock(&ha_mutex);*total=model.view_count?model.view_count:1;*current=1;
  for(unsigned i=0;i<model.view_count;i++)if(!strcmp(model.path,model.view_paths[i])){*current=i+1;break;}
+ pthread_mutex_unlock(&ha_mutex);
+}
+
+void ha_brightness(unsigned i,const struct tile *expected,float value){
+ if(!(value>=0&&value<=1))return;
+ pthread_mutex_lock(&ha_mutex);
+ if(i<item_count){struct tile *t=&items[i];
+  if(strcmp(t->entity,expected->entity)||!t->brightness_configured||!t->brightness_available){strcpy(notice,"Dimmer unavailable or dashboard changed");notice_until=now_ms()+7000;}
+  else if(!connected||!checked||now_ms()-checked>=10000){strcpy(notice,"Offline: brightness change not queued");notice_until=now_ms()+7000;}
+  else snprintf(pending_action,sizeof pending_action,"{\"id\":2,\"type\":\"call_service\",\"domain\":\"light\",\"service\":\"turn_on\",\"service_data\":{\"entity_id\":\"%s\",\"brightness_pct\":%d}}",t->entity,(int)(value*100+0.5f));
+ }
  pthread_mutex_unlock(&ha_mutex);
 }

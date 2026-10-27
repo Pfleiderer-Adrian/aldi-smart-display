@@ -41,6 +41,7 @@ For a optional manual start through ADB, first stop other display apps, then run
 | grid, horizontal-stack, vertical-stack, sections | Ordered traversal; native four-tile layout, not browser geometry |
 | conditional, visibility rules | Explicit unsupported placeholder; rules are not bypassed |
 | history/statistics graphs, pictures, iframe, custom cards | Explicit unsupported placeholder; no browser renderer |
+| light-brightness tile feature | Native tap/drag dimmer, reads actual brightness and sends light.turn_on with brightness_pct |
 | media-player-volume-slider tile feature | Native tap/drag volume slider when the entity supports volume_set; updates on release |
 | other tile features, hold/double-tap, confirmation dialogs | Not implemented; never silently executed or bypassed |
 
@@ -74,3 +75,23 @@ Tap or drag the bottom bar and release to send media_player.volume_set; the
 slider reads back the actual state after the request. If volume is unavailable,
 the bar is disabled. Mute buttons are not implemented; configure
 show_mute_button: false. Offline changes are not queued.
+
+### Light dimmer
+
+Add a **Tile** card for your light and enable its **Light brightness** feature in
+Home Assistant, or configure:
+
+```yaml
+type: tile
+entity: light.living_room
+features:
+  - type: light-brightness
+```
+
+The panel automatically shows a 0->100% dimmer on that card. Tap or drag its bar
+and release to set brightness. The actual light state is read back from HA.
+Dimming requires supported_color_modes indicating a dimmable light. On/off-only,
+unavailable or unknown lights do not accept dimmer input. An off but dimmable
+light shows 0% and can be turned on with the slider. At 0%, the request is
+light.turn_on with brightness_pct: 0; HA handles the resulting off state.
+

@@ -3,7 +3,7 @@
 #define HA_CLIENT_H
 #include <pthread.h>
 struct tile { char name[81], value[81], unit[31], entity[121];
- char kind[32], hint[81], action[1024];float minimum,maximum;int explicit_name;int volume_configured,volume_available;float volume; };
+ char kind[32], hint[81], action[1024];float minimum,maximum;int explicit_name;int volume_configured,volume_available;float volume;int brightness_configured,brightness_available;float brightness; };
 struct dashboard_model { struct tile tiles[64];unsigned count;char title[81],view[81],path[81];
  char view_paths[16][81];unsigned view_count;int overflow; };
 int dashboard_parse(const char *json,const char *dashboard,const char *view,struct dashboard_model *model);
@@ -16,6 +16,8 @@ void ha_next_view(void);
 void ha_view_position(unsigned *current,unsigned *total);
 void ha_tap(unsigned index,const struct tile *expected);
 int dashboard_volume(const char *json,float *level);
+int dashboard_brightness(const char *json,float *level);
+void ha_brightness(unsigned index,const struct tile *expected,float value);
 void ha_volume(unsigned index,const struct tile *expected,float value);
 void ha_notice(char *out,unsigned capacity);
 

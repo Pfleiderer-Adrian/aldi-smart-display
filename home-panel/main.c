@@ -114,30 +114,45 @@ int main(int argc,char **argv) {
     int input=open("/dev/input/event1",O_RDONLY|O_NONBLOCK);
     if(input<0){perror("open touch input");close(fd);free(before);free(canvas);return 1;}
     ha_start("secrets.json",tiles,tile_count);
-    int tx=0,ty=0,pressed=0,down_x=0,down_y=0;int64_t down_at=0;unsigned page=0;long started=seconds(),last=-1;
+    int tx=0,ty=0,pressed=0,contact=0,down_x=0,down_y=0,dragging=-1,preview=-1;float drag_value=0;int64_t preview_until=0;struct tile drag_expected={0};int64_t down_at=0;unsigned page=0;long started=seconds(),last=-1;
     fprintf(stderr,"HOME_PANEL_READY %ux%u bpp=%u rgb=%u/%u/%u alpha=%u@%u\n",v.xres,v.yres,v.bits_per_pixel,v.red.offset,v.green.offset,v.blue.offset,v.transp.length,v.transp.offset);
     while(running) {
         struct input_event32 e;
         while(input>=0 && read(input,&e,sizeof(e))==(ssize_t)sizeof(e)) {
             if(e.type==3 && e.code==53)tx=e.value;
             if(e.type==3 && e.code==54)ty=e.value;
-            if(e.type==3 && e.code==58) {
-                if(e.value>0 && !pressed){pressed=1;down_x=tx;down_y=ty;struct timespec ts;clock_gettime(CLOCK_MONOTONIC,&ts);down_at=(int64_t)ts.tv_sec*1000L+ts.tv_nsec/1000000;}
-                if(e.value==0 && pressed){
-                    pressed=0;struct timespec ts;clock_gettime(CLOCK_MONOTONIC,&ts);int64_t duration=(int64_t)ts.tv_sec*1000L+ts.tv_nsec/1000000-down_at;
+            if(e.type==3 && e.code==58)contact=e.value>0;
+            // Evaluate a complete input frame, after both coordinates and pressure.
+            if(e.type==0 && e.code==0){
+                struct timespec ts;clock_gettime(CLOCK_MONOTONIC,&ts);int64_t now=(int64_t)ts.tv_sec*1000L+ts.tv_nsec/1000000;
+                if(contact && !pressed){
+                    pressed=1;down_x=tx;down_y=ty;down_at=now;dragging=-1;preview=-1;
                     if(down_y>=145 && down_y<465){
                         unsigned col=down_x>=524?1:0,row=down_y>=315?1:0,index=page*4+row*2+col;
                         int x=col?524:40,y=row?315:145;
-                        if(index<tile_count && display_tiles[index].volume_configured && down_x>=x+20 && down_x<x+440 && down_y>=y+96 && down_y<y+148){
-                            float value=(float)(tx-(x+20))/420;if(value<0)value=0;if(value>1)value=1;
-                            ha_volume(index,&display_tiles[index],value);last=-1;continue;
+                        if(index<tile_count && down_x>=x+14 && down_x<x+446 && down_y>=y+90 && down_y<y+150){
+                            struct tile *t=&display_tiles[index];
+                            if((t->brightness_configured&&t->brightness_available)||(t->volume_configured&&t->volume_available)){dragging=(int)index;drag_expected=*t;}
                         }
                     }
-                    if(duration>=500 || abs(tx-down_x)>24 || abs(ty-down_y)>24)continue;
+                }
+                if(pressed && dragging>=0){
+                    int x=dragging%2?524:40;drag_value=(float)(tx-(x+20))/420;
+                    if(drag_value<0)drag_value=0;if(drag_value>1)drag_value=1;
                     last=-1;
+                }
+                if(!contact && pressed){
+                    pressed=0;last=-1;
+                    if(dragging>=0){
+                        if(drag_expected.brightness_configured)ha_brightness((unsigned)dragging,&drag_expected,drag_value);
+                        else ha_volume((unsigned)dragging,&drag_expected,drag_value);
+                        preview=dragging;preview_until=now+1500;dragging=-1;continue;
+                    }
+                    if(now-down_at>=500 || abs(tx-down_x)>24 || abs(ty-down_y)>24)continue;
                     if(ty>=145 && ty<465){unsigned col=tx>=524?1:0,row=ty>=315?1:0;
                         if((tx>=40&&tx<500)||(tx>=524&&tx<984)){unsigned index=page*4+row*2+col;if(index<tile_count)ha_tap(index,&display_tiles[index]);}}
                     if(ty>=510 && ty<580){
+                        preview=-1;
                         if(tx>=40 && tx<340)page=(page+1)%(tile_count?(tile_count+3)/4:1);
                         if(tx>=362 && tx<662)ha_next_view();
                         if(tx>=684 && tx<984)ha_reload();
@@ -156,17 +171,26 @@ int main(int argc,char **argv) {
             label(dashboard_title,40,28,940,2,white);
             char status[128];ha_status(status,sizeof status);label(status,40,94,940,1,muted);
             for(unsigned i=0;i<4 && page*4+i<tile_count;i++) {
-                struct tile *t=&display_tiles[page*4+i];
+                unsigned index=page*4+i;struct tile local=display_tiles[index];struct tile *t=&local;
+                struct timespec preview_time;clock_gettime(CLOCK_MONOTONIC,&preview_time);
+                int64_t preview_now=(int64_t)preview_time.tv_sec*1000L+preview_time.tv_nsec/1000000;
+                if((dragging==(int)index||(preview==(int)index&&preview_now<preview_until))&&!strcmp(t->entity,drag_expected.entity)){
+                    if(t->brightness_configured){t->brightness=drag_value;strcpy(t->value,drag_value>0?"on":"off");}
+                    else t->volume=drag_value;
+                }
                 int x=i%2?524:40,y=i/2?315:145;
                 rect(x,y,460,150,tile);
                 label(t->name,x+20,y+14,420,1,muted);
                 char value[120];snprintf(value,sizeof value,"%s %s",t->value,t->unit);
                 if(t->volume_configured && t->volume_available)snprintf(value,sizeof value,"%s / %d%%",t->value,(int)(t->volume*100+0.5f));
+                if(t->brightness_configured&&t->brightness_available)snprintf(value,sizeof value,"%s / %d%%",t->value,(int)(t->brightness*100+0.5f));
                 label(value,x+20,y+54,420,2,!strcmp(t->value,"off")?rgb(235,85,95):accent);
-                if(t->volume_configured){
-                    uint16_t slider=t->volume_available?accent:muted;
+                if(t->volume_configured||t->brightness_configured){
+                    int available=t->brightness_configured?t->brightness_available:t->volume_available;
+                    float level=t->brightness_configured?t->brightness:t->volume;
+                    uint16_t slider=available?accent:muted;
                     rect(x+20,y+119,420,6,muted);
-                    if(t->volume_available){int fill=(int)(420*t->volume);rect(x+20,y+119,fill,6,slider);rect(x+20+fill-6,y+110,12,24,slider);}
+                    if(available){int fill=(int)(420*level);rect(x+20,y+119,fill,6,slider);rect(x+20+fill-6,y+110,12,24,slider);}
                 }
                 if(!strcmp(t->kind,"gauge")&&t->maximum>t->minimum){float ratio=(float)(atof(t->value)-t->minimum)/(t->maximum-t->minimum);if(ratio<0)ratio=0;if(ratio>1)ratio=1;rect(x+20,y+108,420,4,muted);rect(x+20,y+108,(int)(420*ratio),4,accent);}
             }

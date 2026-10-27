@@ -35,7 +35,7 @@ device manufacturer.
 - A firmware hook that starts `/autostart.sh` from the FAT32 data microSD.
 - A small native hello world demo that runs directly from the data card.
 - A [native Home Assistant Dashboard Client](home-panel/README.md) with dashboard-driven tiles,
-  configured tap actions and a media-player volume slider.
+  configured tap actions, light dimmers and a media-player volume slider.
 
 **Without a data card, or without `autostart.sh`, the manufacturer interface
 continues running.** Application updates normally require changing SD files,

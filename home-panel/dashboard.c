@@ -51,6 +51,7 @@ static void entity_card(struct doc *d,int c,const char *kind,const char *entity,
  if(features>=0&&d->t[features].type==JSMN_ARRAY){
   for(int i=features+1;i<d->n&&d->t[i].start<d->t[features].end;i=next(d,i)){
    if(!strcmp(kind,"tile")&&equal(d,property(d,i,"type"),"media-player-volume-slider")&&!strncmp(entity,"media_player.",13))t->volume_configured=1;
+   else if(!strcmp(kind,"tile")&&equal(d,property(d,i,"type"),"light-brightness")&&!strncmp(entity,"light.",6))t->brightness_configured=1;
    else strcpy(t->hint,"Additional configured feature unsupported");
   }
  }
@@ -110,6 +111,19 @@ int dashboard_volume(const char *s,float *level){
    char raw_value[40],raw_flags[40],*end;if(!raw(&d,v,raw_value,sizeof raw_value)||!raw(&d,f,raw_flags,sizeof raw_flags)){free(d.t);return 0;}
    float value=strtof(raw_value,&end);if(end!=raw_value&&!*end&&value>=0&&value<=1){
     unsigned long flags=strtoul(raw_flags,&end,10);if(end!=raw_flags&&!*end&&(flags&4)){*level=value;ok=1;}}
+  }
+ }free(d.t);return ok;
+}
+
+int dashboard_brightness(const char *s,float *level){
+ struct doc d={0};int ok=0;if(open_doc(&d,s)){
+  int a=property(&d,0,"attributes"),m=property(&d,a,"supported_color_modes"),b=property(&d,a,"brightness");int dimmable=0;
+  if(m>=0&&d.t[m].type==JSMN_ARRAY)for(int i=m+1;i<d.n&&d.t[i].start<d.t[m].end;i=next(&d,i)){
+   if(equal(&d,i,"brightness")||equal(&d,i,"color_temp")||equal(&d,i,"hs")||equal(&d,i,"xy")||equal(&d,i,"rgb")||equal(&d,i,"rgbw")||equal(&d,i,"rgbww")||equal(&d,i,"white"))dimmable=1;
+  }
+  if(dimmable&&equal(&d,property(&d,0,"state"),"off")){*level=0;ok=1;}
+  else if(dimmable&&equal(&d,property(&d,0,"state"),"on")&&b>=0&&d.t[b].type==JSMN_PRIMITIVE){
+   char value[40],*end;if(raw(&d,b,value,sizeof value)){float brightness=strtof(value,&end);if(end!=value&&!*end&&brightness>=0&&brightness<=255){*level=brightness/255;ok=1;}}
   }
  }free(d.t);return ok;
 }
