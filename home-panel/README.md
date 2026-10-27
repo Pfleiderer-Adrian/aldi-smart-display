@@ -9,6 +9,7 @@ ARMv7 display. This project is separate from `hello-world-demo`.
 
 ## Setup
 
+0. Flash your display -> [Quick start](https://github.com/Pfleiderer-Adrian/aldi-smart-display/blob/main/docs/quickstart.md)
 1. Copy `sd-card/home-panel/` from the repository to your FAT32 data card.
 2. Copy its `secrets.example.json` to `secrets.json` and enter the **dashboard URL**,
    access token, Wi-Fi name and password. Obtain a long-lived access token from
