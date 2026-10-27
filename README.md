@@ -124,7 +124,7 @@ Requires the SD autostart firmware hook from the guide above.
 1. Copy `sd-card/home-panel/` to your FAT32 data card, alongside `hello-world/`.
 2. In that folder, copy `secrets.example.json` to **`secrets.json`** and fill in:
    - `dashboard_url`: full URL including the dashboard and view.
-   - `home_assistant_token`: long-lived access token from HA profile ? Security.
+   - `home_assistant_token`: long-lived access token from your HA profile -> Security.
    - `wifi_ssid` and `wifi_password`: your WPA2 Wi-Fi credentials.
 3. Back up the card's root `autostart.sh`, then replace it with
    [`home-panel/autostart.sh`](home-panel/autostart.sh), or use:
