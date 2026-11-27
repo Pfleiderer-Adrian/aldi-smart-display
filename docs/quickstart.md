@@ -68,6 +68,15 @@ You can install later applications by replacing the SD files; another firmware
 flash is normally unnecessary. Stop the application before replacing its files
 or removing the card.
 
+## Optional native panels
+
+Once the SD autostart hook works, the same data card can also run
+[Home Assistant Panel](../README.md#home-assistant-panel-optional) or
+[MOVA Panel](../README.md#mova-panel-optional). Their folders can coexist;
+select one by replacing the card's root autostart.sh with that app's launcher.
+Use only the example configuration when sharing files. No further firmware
+flash is needed to change applications.
+
 ## Check ADB
 
 On Ubuntu, run `adb devices -l`. On Windows, with Google Platform-Tools extracted

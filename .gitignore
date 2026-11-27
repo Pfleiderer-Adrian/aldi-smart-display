@@ -25,3 +25,12 @@ __pycache__/
 /sd-card/home-panel/secrets.json
 /sd-card/home-panel/dashboard-cache.json*
 /sd-card/home-panel/dashboard.tsv
+
+# MOVA Panel: private account/Wi-Fi data, generated maps and development outputs.
+/mova-panel/build/
+/mova-panel/.venv/
+/mova-panel/secrets*.json
+!/mova-panel/secrets.example.json
+/mova-panel/research-*
+/sd-card/mova-panel/secrets*.json
+!/sd-card/mova-panel/secrets.example.json

@@ -1,0 +1,4 @@
+Only protocol reference: Tasshack/dreame-vacuum
+Reviewed revision: fec086caf064f2681e8bcc7be20a0d0ef54f444d
+https://github.com/Tasshack/dreame-vacuum/blob/fec086caf064f2681e8bcc7be20a0d0ef54f444d/custom_components/dreame_vacuum/dreame/protocol.py
+Native C subset; not the full Python integration.

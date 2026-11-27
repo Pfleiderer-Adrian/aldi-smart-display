@@ -79,3 +79,16 @@ the device off before removal is another straightforward option.
 Use a separate data card and keep the FEL card available for recovery. Do not
 format a card just because a directory listing is slow; it may contain valuable
 data or have filesystem damage.
+
+## Build the optional MOVA Panel
+
+```sh
+python -m pip install -r mova-panel/requirements.txt
+python mova-panel/build.py
+```
+
+The output is `mova-panel/build/sd-card/`. Copy its application folder to the data
+card after stopping the running app. The selected root autostart script can be
+copied separately; keep a backup of your current selection. The build never copies
+private secrets.json. For orientation, diagnostics and optional ADB tests, see
+[the MOVA Panel guide](../mova-panel/README.md).

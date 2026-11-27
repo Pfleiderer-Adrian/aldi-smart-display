@@ -7,3 +7,10 @@ firmware/* text eol=lf
 *.sunxi binary
 *.ttf binary
 sd-card/home-panel/home-panel binary
+sd-card/mova-panel/mova-panel binary
+
+# Preserve portable MOVA SD packages and identical source/build text bytes.
+mova-panel/** text eol=lf
+mova-panel/assets/*.ttf binary
+sd-card/mova-panel/** text eol=lf
+sd-card/mova-panel/mova-panel binary
