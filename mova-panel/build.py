@@ -18,7 +18,9 @@ def run(args):
 def main():
     out = BUILD / "generated"
     out.mkdir(parents=True, exist_ok=True)
-    font = ImageFont.truetype(str(ROOT / "assets/DejaVuSans.ttf"), 24)
+    # Rasterize independent glyphs; avoid RAQM shaping failures on invisible characters.
+    font = ImageFont.truetype(str(ROOT / "assets/DejaVuSans.ttf"), 24,
+                              layout_engine=ImageFont.Layout.BASIC)
     widths, rows = [], []
     for code in range(32, 384):
         ch = chr(code)
