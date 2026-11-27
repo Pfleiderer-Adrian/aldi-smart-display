@@ -66,3 +66,34 @@ The publication package omits upstream sunxi-tools tests and its development CI
 file. On 2026-10-27, the vendored Makefile's test-only `check` target and test
 cleanup command were removed to match that packaging change. Runtime and build
 sources and their license notices are retained.
+
+## MOVA Panel
+
+`mova-panel/` contains native project code (GPL-2.0-or-later) based on Home Panel.
+The only cloud-protocol reference is Tasshack/dreame-vacuum at revision
+`fec086caf064f2681e8bcc7be20a0d0ef54f444d`; see
+`mova-panel/PROTOCOL-SOURCE.txt`. Home Assistant and its Python dependencies are
+not bundled or needed at runtime.
+
+- **Mbed TLS 2.28.10**: downloaded at build time from
+  <https://github.com/Mbed-TLS/mbedtls/tree/v2.28.10>, under the dual
+  Apache-2.0 OR GPL-2.0-or-later license. The verified download's license is copied
+  to the SD package as MBEDTLS-LICENSE.
+- **zlib 1.3.1**: downloaded at build time from
+  <https://github.com/madler/zlib/tree/v1.3.1>, under its zlib license, copied to
+  the SD package as ZLIB-LICENSE.
+- **jsmn v1.1.0** and **DejaVu Sans**: same versions/notices as Home Panel.
+- **Public CA roots**: Mozilla certificate bundle distributed by
+  <https://curl.se/docs/caextract.html>. The PEM header records its extraction date.
+  This file contains public trust anchors, not device certificates/private keys.
+
+The SD folder includes the static ARM executable, public CA bundle and dependency
+notices. Its corresponding source and pinned Python build requirements are in
+`mova-panel/`. Fixed release URLs and SHA-256 digests are recorded in
+`mova-panel/dependencies.lock.json`. The build downloads and verifies these inputs
+in ignored `mova-panel/build/dependencies/` and rejects changed cached inputs.
+Mbed TLS/zlib source trees and a separate source archive are not included in the
+repository. Upstream development tooling is not redistributed.
+The MOVA README photograph was provided by the project owner and shows the
+display running MOVA Panel beside a MOVA V70 Ultra Complete. Credentials, tokens,
+Wi-Fi settings and robot map files are excluded from publication.

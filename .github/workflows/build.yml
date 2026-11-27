@@ -26,3 +26,21 @@ jobs:
       - name: Check shell syntax
         if: runner.os == 'Linux'
         run: for f in firmware/* demo/*.sh; do sh -n "$f"; done
+  mova-panel:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r mova-panel/requirements.txt
+      - run: python -m unittest discover -s mova-panel -p test_build_deps.py
+      - run: python mova-panel/build.py
+      - name: Check MOVA launcher syntax
+        if: runner.os == 'Linux'
+        run: for f in mova-panel/*.sh; do sh -n "$f"; done
+      - name: Check public MOVA package
+        run: python -c "from pathlib import Path; p=Path('mova-panel/build/sd-card/mova-panel'); assert (p/'mova-panel').stat().st_size > 0; assert (p/'secrets.example.json').exists(); assert not (p/'secrets.json').exists()"

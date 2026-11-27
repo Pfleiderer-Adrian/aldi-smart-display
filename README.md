@@ -22,6 +22,13 @@ device manufacturer.
 **Home Assistant Panel running on the BAUHN smart display.**
 </p>
 <br>
+<p align="center">
+  <img src="assets/readme_image_mova.jpeg" alt="BAUHN smart display running the Home Assistant Panel" width="500">
+</p>
+<p align="center">
+**MOVAhome Panel running on the BAUHN smart display.**
+</p>
+<br>
 
 > WARNING:
 > **Flashing modified firmware can brick your display (unusabel) and cause data loss.**
@@ -39,6 +46,8 @@ device manufacturer.
 - A small native hello world demo that runs directly from the data card.
 - A [native Home Assistant Dashboard Client](home-panel/README.md) with dashboard-driven tiles,
   configured tap actions, light dimmers and a media-player volume slider.
+- A [native MOVA Panel](mova-panel/README.md) with dynamic room selection,
+  saved custom cleaning settings, pause/stop and script-controlled portrait/landscape modes.
 
 **Without a data card, or without `autostart.sh`, the manufacturer interface
 continues running.** Application updates normally require changing SD files,
@@ -89,6 +98,19 @@ rootfs stayed unchanged. Keep the complete `work/` directory private and backed
 up. It contains your original firmware and possibly device-specific settings.
 
 ## SD-card layout
+
+Both optional panels follow the same source/runtime split:
+
+| Application | Source, build tools and documentation | Ready-to-copy SD application |
+|---|---|---|
+| Hello World | `demo/`, `tools/build_demo.py` | `sd-card/hello-world/` |
+| Home Assistant Panel | `home-panel/` | `sd-card/home-panel/` |
+| MOVA Panel | `mova-panel/` | `sd-card/mova-panel/` |
+
+Only the runtime folders under `sd-card/` belong on the data card. The source
+folders stay on the development computer and are used to rebuild the executables.
+MOVA's downloaded build dependencies stay in ignored `mova-panel/build/`.
+Select one application through the card's root `autostart.sh`.
 
 For the included demo, copy the **contents** of `sd-card/` directly to your card.
 Its source is in `demo/`. To rebuild it, use `tools/build_demo.py` and copy the
@@ -143,6 +165,52 @@ creates its temporary Wi-Fi configuration in RAM. Native connections currently
 require local HTTP/WS with an IPv4 address; TLS is not supported, so the token is
 unencrypted on the LAN. See the [panel README](home-panel/README.md) for supported
 cards, limitations and development instructions.
+
+## MOVA Panel (optional)
+
+<p align="center">
+  <img src="assets/readme_image_mova.jpeg" alt="BAUHN display running MOVA Panel in portrait mode next to a MOVA V70 Ultra Complete" width="500">
+</p>
+
+A third native SD-card example alongside Hello World and Home Panel, tested with
+MOVAhome and a MOVA V70 Ultra Complete. It loads room IDs/names directly from the
+cloud and offers **All rooms**, **Refresh**, individual room selection,
+**Start**, **Pause** and **Stop**. Cleaning uses the last manual settings saved
+in MOVAhome and disables CleanGenius before starting.
+This uses an **unofficial cloud protocol** referenced exclusively from
+[Tasshack/dreame-vacuum](https://github.com/Tasshack/dreame-vacuum).
+
+1. Copy `sd-card/mova-panel/` to the FAT32 data card alongside the other apps.
+2. Copy its `secrets.example.json` to **`secrets.json`**. The unmodified example
+   starts an offline demo. For live use, set `demo: 0`, enter your MOVAhome and
+   WPA2 Wi-Fi credentials and discover the device ID/model as described in the
+   [MOVA setup guide](mova-panel/README.md#discover-your-robot).
+3. Back up the card's root `autostart.sh`, then replace it with
+   [`mova-panel/autostart.sh`](mova-panel/autostart.sh), or use:
+
+   ```sh
+   #!/bin/sh
+   card_dir=${0%/*}
+   exec /bin/sh "$card_dir/mova-panel/start.sh"
+   ```
+
+The bundled MOVA launcher currently selects portrait. Change
+`orientation=portrait` to `orientation=landscape` in the card's
+`mova-panel/start.sh` for landscape; orientation is not an on-screen setting.
+The repository's default `sd-card/autostart.sh` still selects Hello World.
+Switching these apps does not require another firmware flash.
+
+**Keep `secrets.json` private.** HTTPS certificate checks stay enabled; Wi-Fi,
+DHCP and clock synchronization run on the display, without a PC relay or Home
+Assistant server. Room refresh is manual after initial loading. Actual robot
+cleaning and a full cold boot remain unverified; cloud login, dynamic rooms,
+portrait/landscape rendering and injected touch selection were tested.
+See the [MOVA Panel README](mova-panel/README.md) for setup, compatibility limits,
+read-only diagnostics and development instructions.
+
+Mbed TLS and zlib are downloaded only when building, using pinned versions and
+SHA-256 verification. Their source trees and a separate source archive are not
+included in the repository. Downloads stay in ignored build directories.
 
 ## Development and recovery
 
