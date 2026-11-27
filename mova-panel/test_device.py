@@ -77,7 +77,7 @@ def main():
         for invalid in [{'code': 0, 'data': {'result': props[:-1]}},
                         {'code': 0, 'data': {'result': props[1:]}}, {'code': -1}]:
             assert settings_check(invalid, ok=False).returncode != 0
-        assert lines[-1] == 'SELF_TEST_OK' 
+        assert lines[-1] == 'SELF_TEST_OK'
         for change in ({'region': 'invalid'}, {'rooms': [{'id': 8, 'name': 'A'}, {'id': 8, 'name': 'B'}]},
                        {'rooms': [{'id': 0, 'name': 'A'}]}, {'demo': 2}):
             upload(settings | change)
